@@ -4,13 +4,31 @@
 
 const path = require('path')
 
-module.exports = {
-  dev: {
+const atmConfig = require('../AtmConfig.js')
+let targetUrl = atmConfig.devServer
 
+// 动态设置代理路径
+const proxyTable = {}
+const pathRewrite = {}
+if (process.env.RUN_ENV == 'mock' || process.env.RUN_ENV == 'server') {
+  pathRewrite['^' + faceConfig.basePath] = '/'
+  proxyTable[faceConfig.basePath] = {
+    target: targetUrl,
+    changeOrigin: true,
+    pathRewrite: {
+      ...pathRewrite
+    }
+  }
+} else {
+  // proxyTable=false
+}
+
+const mymodule ={
+  dev: {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: proxyTable,
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -46,12 +64,10 @@ module.exports = {
   build: {
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
-    one: path.resolve(__dirname,'../dist/one.html'),
-    two: path.resolve(__dirname,'../dist/two.html'),
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: `${atmConfig.context}`,
 
     /**
      * Source Maps
@@ -75,3 +91,11 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report
   }
 }
+
+
+function decoretorConfig() {
+  let listmap = (atmConfig.projects).map(s=>{ var obj = s.substring(s.lastIndexOf('/')+1); let myObj={}; myObj[obj] ='../dist/'+obj+'.html'; return Object.assign({},myObj)});
+  Object.assign(mymodule.build,...listmap)};
+decoretorConfig();
+
+module.exports = mymodule

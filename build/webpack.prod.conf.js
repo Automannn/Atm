@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const config = require('../config')
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
+const atmConfig = require('../AtmConfig.js')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -180,5 +181,12 @@ if (config.build.bundleAnalyzerReport) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
+
+function decoretorConfig() {
+  let listmap = (atmConfig.projects).map(s=>{var obj = s.substring(s.lastIndexOf('/')+1);let myObj={};myObj.filename=obj+'.html';myObj.template=obj+'.html';myObj.inject= true;myObj.chunks=[obj];return new HtmlWebpackPlugin(myObj)});
+  let _old=[...devWebpackConfig.plugins];
+  devWebpackConfig.plugins=[..._old,...listmap];
+};
+decoretorConfig();
 
 module.exports = webpackConfig

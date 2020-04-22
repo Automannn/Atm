@@ -5,6 +5,7 @@ const config = require('../config')
 const merge = require('webpack-merge')
 const path = require('path')
 const baseWebpackConfig = require('./webpack.base.conf')
+const atmConfig = require('../AtmConfig.js')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
@@ -12,6 +13,8 @@ const portfinder = require('portfinder')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
+
+
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -58,18 +61,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       inject: true,
       chunks:['app']
     }),
-    new HtmlWebpackPlugin({
-      filename: 'one.html',
-      template: 'one.html',
-      inject: true,
-      chunks:['one']
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'two.html',
-      template: 'two.html',
-      inject: true,
-      chunks:['two']
-    }),
     // copy custom static assets
     new CopyWebpackPlugin([
       {
@@ -80,6 +71,13 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     ])
   ]
 })
+
+function decoretorConfig() {
+  let listmap = (atmConfig.projects).map(s=>{var obj = s.substring(s.lastIndexOf('/')+1);let myObj={};myObj.filename=obj+'.html';myObj.template=obj+'.html';myObj.inject= true;myObj.chunks=[obj];return new HtmlWebpackPlugin(myObj)});
+  let _old=[...devWebpackConfig.plugins];
+  devWebpackConfig.plugins=[..._old,...listmap];
+};
+decoretorConfig();
 
 module.exports = new Promise((resolve, reject) => {
   portfinder.basePort = process.env.PORT || config.dev.port
