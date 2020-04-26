@@ -4,7 +4,7 @@ const AtmConfig =()=>{
     basePath:'http://localhost:8081/atm',
     devServer:'http://localhost:8080/atm',
     projects:[
-      'projects/one',
+      'projects/auth',
       'projects/two'
     ],
     //项目首页配置

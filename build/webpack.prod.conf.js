@@ -82,9 +82,9 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     new HtmlWebpackPlugin({
       filename: process.env.NODE_ENV === 'testing'
-        ? 'one.html'
+        ? 'auth.html'
         : config.build.one,
-      template: 'one.html',
+      template: 'auth.html',
       inject: true,
       minify: {
         removeComments: true,
@@ -184,8 +184,8 @@ if (config.build.bundleAnalyzerReport) {
 
 function decoretorConfig() {
   let listmap = (atmConfig.projects).map(s=>{var obj = s.substring(s.lastIndexOf('/')+1);let myObj={};myObj.filename=obj+'.html';myObj.template=obj+'.html';myObj.inject= true;myObj.chunks=[obj];return new HtmlWebpackPlugin(myObj)});
-  let _old=[...devWebpackConfig.plugins];
-  devWebpackConfig.plugins=[..._old,...listmap];
+  let _old=[...webpackConfig.plugins];
+  webpackConfig.plugins=[..._old,...listmap];
 };
 decoretorConfig();
 
